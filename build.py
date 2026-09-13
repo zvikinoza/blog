@@ -65,6 +65,9 @@ def parse_post(path: Path) -> dict:
 
     md = markdown.Markdown(extensions=MD_EXTENSIONS, extension_configs=MD_CONFIG)
     content = md.convert(body)
+    # root-absolute asset paths (/static/...) -> full URL, so they work under a
+    # sub-path like /blog/ and inside RSS readers
+    content = content.replace('src="/', f'src="{SITE["url"]}/').replace('href="/', f'href="{SITE["url"]}/')
 
     date = dt.date.fromisoformat(meta["date"])
     slug = meta.get("slug") or re.sub(r"^\d{4}-\d{2}-\d{2}-", "", path.stem)
