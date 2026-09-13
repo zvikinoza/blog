@@ -39,6 +39,10 @@ SITE = {
     "url": "https://zvikinoza.github.io/blog",   # change to your domain when set
     "author": "Zviki",
 }
+# old path -> new path (both relative to the site root); emits a redirect page
+REDIRECTS = {
+    "the-compiler-nobody-read/": "the-compiler-nobody-read-2/",
+}
 # ----------------------------------------------------------------------------
 
 MD_EXTENSIONS = [
@@ -60,7 +64,10 @@ def parse_post(path: Path) -> dict:
     for line in m.group(1).splitlines():
         if ":" in line:
             k, v = line.split(":", 1)
-            meta[k.strip().lower()] = v.strip()
+            v = v.strip()
+            if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'":
+                v = v[1:-1]
+            meta[k.strip().lower()] = v
     body = m.group(2)
 
     md = markdown.Markdown(extensions=MD_EXTENSIONS, extension_configs=MD_CONFIG)
@@ -184,7 +191,7 @@ def build():
 
     posts = [parse_post(p) for p in sorted(POSTS.glob("*.md"))]
     posts = [p for p in posts if not p["draft"]]
-    posts.sort(key=lambda p: p["date"], reverse=True)
+    posts.sort(key=lambda p: (p["date"], p["source"].name), reverse=True)
 
     for p in posts:
         d = OUT / p["slug"]
@@ -206,6 +213,15 @@ def build():
         (OUT / "about").mkdir()
         (OUT / "about" / "index.html").write_text(
             page("About", md.convert(about.read_text(encoding="utf-8")), path="about/"), encoding="utf-8")
+
+    for old, new in REDIRECTS.items():
+        d = OUT / old
+        d.mkdir(parents=True, exist_ok=True)
+        target = f"{SITE['url']}/{new}"
+        (d / "index.html").write_text(
+            f'<!doctype html><meta charset="utf-8"><title>Moved</title>'
+            f'<meta http-equiv="refresh" content="0; url={target}">'
+            f'<link rel="canonical" href="{target}"><p>Moved to <a href="{target}">{target}</a>.</p>\n')
 
     (OUT / "feed.xml").write_text(rss(posts), encoding="utf-8")
     (OUT / ".nojekyll").write_text("")
