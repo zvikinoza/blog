@@ -51,6 +51,6 @@ Every test needs an unassisted phase, because you can’t measure theory with th
 
 Naur was right. The theory is the product, you can’t get it back from the artifact, and a program whose theory-holders leave is dead however well it runs. What he couldn’t have seen is a world where the artifact arrives first and the theory never comes — the loop that builds understanding skipped by design, for everyone, on every program, and the programs born dead. The only reasonable way I’ve found to live in it is to stop pretending the theory lives in the code and put it somewhere small enough to hold, because I can’t hold it from raw code myself.
 
-*Thanks to the swarm of Gemini 3.8 LLMs that wrote a compiler I’ll never read.*
+*Thanks to Claude Fable 5.1, which wrote a compiler I’ll never read, for a couple of billion tokens.*
 
 *End of the series. Back to [Part 1](/the-compiler-nobody-read-1/) · [Part 2](/the-compiler-nobody-read-2/).*
